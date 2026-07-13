@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import health
+from .views import index
 
 
 urlpatterns = [
-    path("", health),
+    path("", index),
 ]

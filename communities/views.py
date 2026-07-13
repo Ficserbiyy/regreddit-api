@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 
-def index(request):
+def community_list(request):
     return JsonResponse(
         {
-            "message": "Welcome to Regreddit!"
+            "message": "Welcome to Community!"
         }
     )
+
