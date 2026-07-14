@@ -221,7 +221,7 @@ dependencies = [
     { name = "django-redis" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic-settings" },
-    { name = "strawberry-graphql", extra = ["django"] },
+    { name = "strawberry-graphql-django" },
 ]
 
 [package.dev-dependencies]
@@ -235,7 +235,7 @@ requires-dist = [
     { name = "django-redis", specifier = ">=7.0.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.4" },
     { name = "pydantic-settings", specifier = ">=2.14.2" },
-    { name = "strawberry-graphql", extras = ["django"], specifier = ">=0.321.0" },
+    { name = "strawberry-graphql-django", specifier = ">=0.86.4" },
 ]
 
 [package.metadata.requires-dev]
@@ -300,10 +300,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/77/b7/9d4d280ccb675fb4273a9e7f1d67b67fbd4ce7baaa15dba646bc20759915/strawberry_graphql-0.321.0-py3-none-any.whl", hash = "sha256:bd85d8a3eda351cc4a952d3d6216096b112c94ee9149e18c4cda754bb967c0d9", size = 336994, upload-time = "2026-07-13T20:56:01.075Z" },
 ]
 
-[package.optional-dependencies]
-django = [
+[[package]]
+name = "strawberry-graphql-django"
+version = "0.86.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
     { name = "asgiref" },
     { name = "django" },
+    { name = "strawberry-graphql" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6d/fd/e7594f807f655f94a3cf388ced88124bf6381fa150e21f6618de4ce4fe47/strawberry_graphql_django-0.86.4.tar.gz", hash = "sha256:dbf47644ed968f1828cb438c3db41a7d789843ec40711a947a5efc6ac88cf3da", size = 93631, upload-time = "2026-06-20T10:59:57.147Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bb/64/3c7e17d94dd0a0b965f90c55796c28a7553913d055170d0ca371c2e20a8c/strawberry_graphql_django-0.86.4-py3-none-any.whl", hash = "sha256:3ba8d10392f12f1b8a2a626d1df67872067021a70f4d5d68c09a1a8117f04de4", size = 117708, upload-time = "2026-06-20T10:59:55.908Z" },
 ]
 
 [[package]]
