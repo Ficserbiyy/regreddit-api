@@ -9,6 +9,7 @@ dependencies = [
     "django-redis>=7.0.0",
     "psycopg[binary]>=3.3.4",
     "pydantic-settings>=2.14.2",
+    "strawberry-graphql[django]>=0.321.0",
 ]
 
 [dependency-groups]

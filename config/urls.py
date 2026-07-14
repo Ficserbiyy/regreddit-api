@@ -24,4 +24,5 @@ urlpatterns = [
     path("communities/", include("communities.urls")),
     path("posts/", include("posts.urls")),
     path("comments/", include("comments.urls")),
+    path("graphql/", include("graphql_api.urls")),
 ]

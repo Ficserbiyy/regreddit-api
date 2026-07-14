@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'users',
     'communities',
     'posts',
-    'comments'
+    'comments',
+    'graphql_api',
 ]
 
 MIDDLEWARE = [
@@ -84,7 +85,7 @@ DATABASES = {
         "NAME": settings.DB_NAME,
         "USER": settings.DB_USER,
         "PASSWORD": settings.DB_PASSWORD,
-        "HOST": "localhost",
+        "HOST": settings.DB_HOST,
         "PORT": 5432,
     }
 }
