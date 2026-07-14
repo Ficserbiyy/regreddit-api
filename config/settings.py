@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-from os import getenv
-from dotenv import load_dotenv
+from .settings_env import settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,10 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 
-load_dotenv()
-
-SECRET_KEY = getenv("SECRET_KEY")
-
+SECRET_KEY = settings.SECRET_KEY
 
 DEBUG = True
 
@@ -83,12 +79,25 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": settings.DB_NAME,
+        "USER": settings.DB_USER,
+        "PASSWORD": settings.DB_PASSWORD,
+        "HOST": "localhost",
+        "PORT": 5432,
     }
 }
 
+# Cache
+# django-redis
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": settings.REDIS_URL,
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
