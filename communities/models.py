@@ -7,7 +7,9 @@ class Community(models.Model):
     description = models.TextField()
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="communities",
     )
     created_at = models.DateTimeField(auto_now_add=True)
