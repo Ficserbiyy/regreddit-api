@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from communities.models import Community
 from posts.models import Post
 from .types import CommunityType, PostType
+from .mutations import Mutation
 
 
 @strawberry.type
@@ -31,4 +32,8 @@ class Query:
     def posts(self) -> list[PostType]:
         return Post.objects.all()                              # type: ignore
 
-schema = strawberry.Schema(query=Query)
+
+schema = strawberry.Schema(
+    query=Query,
+    mutation=Mutation
+)

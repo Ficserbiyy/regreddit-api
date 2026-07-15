@@ -24,3 +24,9 @@ class CommunityType:
     description: strawberry.auto
     creator: UserType
     posts: list[PostType]
+
+
+@strawberry.input
+class CommunityInput:
+    name: str
+    description: str
