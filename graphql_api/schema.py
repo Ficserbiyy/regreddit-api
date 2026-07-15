@@ -1,5 +1,4 @@
 import strawberry
-from django.shortcuts import get_object_or_404
 from communities.models import Community
 from posts.models import Post
 from .types import CommunityType, PostType
@@ -14,6 +13,7 @@ class Query:
         ''' List all existing communities '''
         return Community.objects.all()                         # type: ignore
 
+
     @strawberry.field
     def community(
         self,
@@ -21,12 +21,20 @@ class Query:
         name: str | None = None,
     ) -> CommunityType:
 
-        if id:
-            return get_object_or_404(Community, pk=id)         # type: ignore
-        if name:
-            return get_object_or_404(Community, name=name)     # type: ignore
+        if id is None and not name:
+            raise ValueError("Either 'id' or 'name' must be provided.")
+        if id is not None and id <= 0:
+            raise ValueError("Community id must be greater than 0.")
 
-        raise ValueError("Either 'id' or 'name' must be provided.")
+        community = (
+            Community.objects.filter(pk=id).first()
+            if id is not None
+            else Community.objects.filter(name=name).first()
+        )
+        if not community:
+            raise ValueError("Community not found.")
+        return community                                       # type: ignore
+
 
     @strawberry.field
     def posts(self) -> list[PostType]:

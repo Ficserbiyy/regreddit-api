@@ -14,7 +14,6 @@ class Mutation:
         community = Community.objects.create(
             name=data.name,
             description=data.description,
-            creator=...,
         )
         return community                        # type: ignore
 
