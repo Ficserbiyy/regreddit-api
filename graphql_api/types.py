@@ -25,20 +25,3 @@ class CommunityType:
     description: strawberry.auto
     creator: UserType
     posts: list[PostType]
-
-
-@strawberry.input
-class CommunityInput:
-    name: str
-    description: str
-
-@strawberry.input
-class UserInput:
-    username: str
-    email: str
-    password: str
-
-@strawberry.input
-class LoginInput:
-    username: str
-    password: str

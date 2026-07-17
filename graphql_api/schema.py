@@ -1,12 +1,26 @@
 import strawberry
+from strawberry import Info
 from communities.models import Community
 from posts.models import Post
-from .types import CommunityType, PostType
+from .types import CommunityType, PostType, UserType
 from .mutations import Mutation
+from .exceptions import ValidationError, NotFoundError
 
 
 @strawberry.type
 class Query:
+
+    @strawberry.field
+    def me(
+        self,
+        info: Info
+    ) -> UserType | None:
+        
+        user = info.context.request.user
+        if not user.is_authenticated:
+            return None
+        return user
+
 
     @strawberry.field
     def communities(self) -> list[CommunityType]:
@@ -22,9 +36,9 @@ class Query:
     ) -> CommunityType:
 
         if id is None and not name:
-            raise ValueError("Either 'id' or 'name' must be provided.")
+            raise ValidationError("Either 'id' or 'name' must be provided.")
         if id is not None and id <= 0:
-            raise ValueError("Community id must be greater than 0.")
+            raise ValidationError("Community id must be greater than 0.")
 
         community = (
             Community.objects.filter(pk=id).first()
@@ -32,12 +46,13 @@ class Query:
             else Community.objects.filter(name=name).first()
         )
         if not community:
-            raise ValueError("Community not found.")
+            raise NotFoundError("Community not found.")
         return community                                       # type: ignore
 
 
     @strawberry.field
     def posts(self) -> list[PostType]:
+        ''' List all existing posts '''
         return Post.objects.all()                              # type: ignore
 
 
