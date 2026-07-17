@@ -8,6 +8,7 @@ from posts.models import Post
 class UserType:
     id: strawberry.auto
     username: strawberry.auto
+    email: strawberry.auto
 
 
 @strawberry.django.type(Post)
@@ -30,3 +31,14 @@ class CommunityType:
 class CommunityInput:
     name: str
     description: str
+
+@strawberry.input
+class UserInput:
+    username: str
+    email: str
+    password: str
+
+@strawberry.input
+class LoginInput:
+    username: str
+    password: str
