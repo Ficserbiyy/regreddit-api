@@ -2,9 +2,10 @@ import strawberry
 from strawberry import Info
 from communities.models import Community
 from users.models import User
+from exceptions import AuthenticationError, ValidationError
 from .types import CommunityType, UserType
 from .inputs import CommunityInput, UserInput, LoginInput
-from .exceptions import AuthenticationError
+from users.helprers import get_current_user
 from django.contrib.auth import (
     authenticate,
     login as auth_login,
@@ -21,12 +22,9 @@ class Mutation:
         info: Info,
         data: CommunityInput,
     ) -> CommunityType:
-        user = info.context.request.user
-
-        if not user.is_authenticated:
-            raise AuthenticationError("Authentication required.")
+        user = get_current_user(info)
         if Community.objects.filter(name=data.name).exists():
-            raise AuthenticationError(f"Community '{data.name}' already exists.")
+            raise ValidationError(f"Community '{data.name}' already exists.")
 
         community = Community.objects.create(
             name=data.name,

@@ -2,9 +2,9 @@ import strawberry
 from strawberry import Info
 from communities.models import Community
 from posts.models import Post
+from exceptions import ValidationError, NotFoundError
 from .types import CommunityType, PostType, UserType
 from .mutations import Mutation
-from .exceptions import ValidationError, NotFoundError
 
 
 @strawberry.type

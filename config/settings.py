@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'communities',
     'posts',
     'comments',
+    'votes',
     'graphql_api',
 ]
 
