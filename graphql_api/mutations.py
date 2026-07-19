@@ -41,13 +41,13 @@ class Mutation:
         self,
         info: Info,
         post_id: int,
-    ) -> PostVoteType | bool:
+    ) -> PostVoteType | None:
         current_user = get_current_user(info)
         db_post = Post.objects.get(pk=post_id)
         if not db_post:
             raise NotFoundError("Post not found")
 
-        existing_vote = PostVote.objects.filter(user=current_user, post=db_post).first()
+        existing_vote = PostVote.objects.get(user=current_user, post=db_post)
         if not existing_vote:
             vote = PostVote.objects.create(
                 user = current_user,
@@ -62,7 +62,36 @@ class Mutation:
             return existing_vote                # type: ignore
         else:
             existing_vote.delete()
-            return True
+            return None
+
+
+    @strawberry.mutation
+    def downvote_post(
+        self,
+        info: Info,
+        post_id: int,
+    ) -> PostVoteType | None:
+        current_user = get_current_user(info)
+        db_post = Post.objects.get(pk=post_id)
+        if not db_post:
+            raise NotFoundError("Post not found")
+
+        existing_vote = PostVote.objects.get(user=current_user, post=db_post)
+        if not existing_vote:
+            vote = PostVote.objects.create(
+                user = current_user,
+                post = db_post,
+                value = VoteValue.DOWN,
+            )
+            return vote                         # type: ignore
+
+        if existing_vote.value == VoteValue.UP:
+            existing_vote.value = VoteValue.DOWN
+            existing_vote.save()
+            return existing_vote                # type: ignore
+        else:
+            existing_vote.delete()
+            return None
 
 
     @strawberry.mutation
