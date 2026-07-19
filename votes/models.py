@@ -3,9 +3,13 @@ from django.conf import settings
 from posts.models import Post
 from comments.models import Comment
 
+class VoteValue(models.IntegerChoices):
+    DOWN = -1, "Downvote"
+    UP = 1, "Upvote"
+
 
 class BaseVote(models.Model):
-    value = models.SmallIntegerField()
+    value = models.SmallIntegerField(choices=VoteValue)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
