@@ -2,10 +2,11 @@ import strawberry
 from strawberry import Info
 from communities.models import Community
 from posts.models import Post
+from comments.models import Comment
 from votes.models import PostVote, CommentVote, VoteValue
 from users.models import User
 from exceptions import AuthenticationError, ValidationError, NotFoundError
-from .types import CommunityType, UserType, PostVoteType
+from .types import CommunityType, UserType, PostVoteType, CommentVoteType
 from .inputs import CommunityInput, UserInput, LoginInput
 from users.helprers import get_current_user
 from django.contrib.auth import (
@@ -87,6 +88,35 @@ class Mutation:
 
         if existing_vote.value == VoteValue.UP:
             existing_vote.value = VoteValue.DOWN
+            existing_vote.save()
+            return existing_vote                # type: ignore
+        else:
+            existing_vote.delete()
+            return None
+
+
+    @strawberry.mutation
+    def upvote_comment(
+        self,
+        info: Info,
+        comment_id: int,
+    ) -> CommentVoteType | None:
+        current_user = get_current_user(info)
+        db_comment = Comment.objects.get(pk=comment_id)
+        if not db_comment:
+            raise NotFoundError("Comment not found")
+
+        existing_vote = CommentVote.objects.get(user=current_user, comment=db_comment)
+        if not existing_vote:
+            vote = CommentVote.objects.create(
+                user = current_user,
+                post = db_comment,
+                value = VoteValue.UP,
+            )
+            return vote                         # type: ignore
+
+        if existing_vote.value == VoteValue.DOWN:
+            existing_vote.value = VoteValue.UP
             existing_vote.save()
             return existing_vote                # type: ignore
         else:

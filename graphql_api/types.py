@@ -2,6 +2,7 @@ import strawberry.django
 from communities.models import Community
 from users.models import User
 from posts.models import Post
+from comments.models import Comment
 from votes.models import PostVote, CommentVote
 
 
@@ -19,6 +20,13 @@ class PostType:
     creator: UserType
 
 
+@strawberry.django.type(Comment)
+class CommentType:
+    id: strawberry.auto
+    creator: UserType
+    post: PostType
+
+
 @strawberry.django.type(Community)
 class CommunityType:
     id: strawberry.auto
@@ -33,3 +41,10 @@ class PostVoteType:
     value: strawberry.auto
     user: UserType
     post: PostType
+
+
+@strawberry.django.type(CommentVote)
+class CommentVoteType:
+    value: strawberry.auto
+    user: UserType
+    comment: CommentType
