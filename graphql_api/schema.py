@@ -2,8 +2,9 @@ import strawberry
 from strawberry import Info
 from communities.models import Community
 from posts.models import Post
+from comments.models import Comment
 from exceptions import ValidationError, NotFoundError
-from .types import CommunityType, PostType, UserType
+from .types import CommunityType, PostType, UserType, CommentType
 from .mutations import Mutation
 
 
@@ -54,6 +55,12 @@ class Query:
     def posts(self) -> list[PostType]:
         ''' List all existing posts '''
         return Post.objects.all()                              # type: ignore
+
+
+    @strawberry.field
+    def comments(self) -> list[CommentType]:
+        ''' List all existing comments '''
+        return Comment.objects.all()                              # type: ignore
 
 
 schema = strawberry.Schema(

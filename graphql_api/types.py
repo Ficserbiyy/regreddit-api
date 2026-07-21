@@ -1,4 +1,5 @@
 import strawberry.django
+from strawberry import Info
 from django.db.models import Sum
 from communities.models import Community
 from users.models import User
@@ -26,11 +27,25 @@ class PostType:
             .aggregate(score=Sum("value"))["score"]
             or 0
         )
+    @strawberry.field
+    def vote_status(
+        self,
+        info: Info,
+    ) -> int:
+        user = info.context.request.user
+        if not user.is_authenticated:
+            return 0
+        vote = PostVote.objects.filter(
+            post=self,
+            user=user,
+        ).first()
+        return vote.value if vote else 0
 
 
 @strawberry.django.type(Comment)
 class CommentType:
     id: strawberry.auto
+    body: strawberry.auto
     creator: UserType
     post: PostType
     @strawberry.field
@@ -40,6 +55,19 @@ class CommentType:
             .aggregate(score=Sum("value"))["score"]
             or 0
         )
+    @strawberry.field
+    def vote_status(
+        self,
+        info: Info,
+    ) -> int:
+        user = info.context.request.user
+        if not user.is_authenticated:
+            return 0
+        vote = CommentVote.objects.filter(
+            post=self,
+            user=user,
+        ).first()
+        return vote.value if vote else 0
 
 
 @strawberry.django.type(Community)

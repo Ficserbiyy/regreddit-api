@@ -41,10 +41,10 @@ class Mutation:
     def upvote_post(
         self,
         info: Info,
-        post_id: int,
+        id: int,
     ) -> PostType | None:
         current_user = get_current_user(info)
-        db_post = Post.objects.filter(pk=post_id).first()
+        db_post = Post.objects.filter(pk=id).first()
         if not db_post:
             raise NotFoundError("Post not found")
 
@@ -70,10 +70,10 @@ class Mutation:
     def downvote_post(
         self,
         info: Info,
-        post_id: int,
+        id: int,
     ) -> PostType | None:
         current_user = get_current_user(info)
-        db_post = Post.objects.filter(pk=post_id).first()
+        db_post = Post.objects.filter(pk=id).first()
         if not db_post:
             raise NotFoundError("Post not found")
 
@@ -99,10 +99,10 @@ class Mutation:
     def upvote_comment(
         self,
         info: Info,
-        comment_id: int,
+        id: int,
     ) -> CommentType | None:
         current_user = get_current_user(info)
-        db_comment = Comment.objects.filter(pk=comment_id).first()
+        db_comment = Comment.objects.filter(pk=id).first()
         if not db_comment:
             raise NotFoundError("Comment not found")
 
@@ -128,10 +128,10 @@ class Mutation:
     def downvote_comment(
         self,
         info: Info,
-        comment_id: int,
+        id: int,
     ) -> CommentType | None:
         current_user = get_current_user(info)
-        db_comment = Comment.objects.filter(pk=comment_id).first()
+        db_comment = Comment.objects.filter(pk=id).first()
         if not db_comment:
             raise NotFoundError("Comment not found")
 
