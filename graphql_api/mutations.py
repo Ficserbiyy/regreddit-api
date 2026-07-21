@@ -6,7 +6,7 @@ from comments.models import Comment
 from votes.models import PostVote, CommentVote, VoteValue
 from users.models import User
 from exceptions import AuthenticationError, ValidationError, NotFoundError
-from .types import CommunityType, UserType, PostVoteType, CommentVoteType
+from .types import CommunityType, UserType, CommentType, PostType
 from .inputs import CommunityInput, UserInput, LoginInput
 from users.helprers import get_current_user
 from django.contrib.auth import (
@@ -42,25 +42,25 @@ class Mutation:
         self,
         info: Info,
         post_id: int,
-    ) -> PostVoteType | None:
+    ) -> PostType | None:
         current_user = get_current_user(info)
-        db_post = Post.objects.get(pk=post_id)
+        db_post = Post.objects.filter(pk=post_id).first()
         if not db_post:
             raise NotFoundError("Post not found")
 
-        existing_vote = PostVote.objects.get(user=current_user, post=db_post)
+        existing_vote = PostVote.objects.filter(user=current_user, post=db_post).first()
         if not existing_vote:
-            vote = PostVote.objects.create(
+            PostVote.objects.create(
                 user = current_user,
                 post = db_post,
                 value = VoteValue.UP,
             )
-            return vote                         # type: ignore
+            return db_post                      # type: ignore            
 
         if existing_vote.value == VoteValue.DOWN:
             existing_vote.value = VoteValue.UP
             existing_vote.save()
-            return existing_vote                # type: ignore
+            return db_post                      # type: ignore
         else:
             existing_vote.delete()
             return None
@@ -71,25 +71,25 @@ class Mutation:
         self,
         info: Info,
         post_id: int,
-    ) -> PostVoteType | None:
+    ) -> PostType | None:
         current_user = get_current_user(info)
-        db_post = Post.objects.get(pk=post_id)
+        db_post = Post.objects.filter(pk=post_id).first()
         if not db_post:
             raise NotFoundError("Post not found")
 
-        existing_vote = PostVote.objects.get(user=current_user, post=db_post)
+        existing_vote = PostVote.objects.filter(user=current_user, post=db_post).first()
         if not existing_vote:
-            vote = PostVote.objects.create(
+            PostVote.objects.create(
                 user = current_user,
                 post = db_post,
                 value = VoteValue.DOWN,
             )
-            return vote                         # type: ignore
+            return db_post                      # type: ignore
 
         if existing_vote.value == VoteValue.UP:
             existing_vote.value = VoteValue.DOWN
             existing_vote.save()
-            return existing_vote                # type: ignore
+            return db_post                      # type: ignore
         else:
             existing_vote.delete()
             return None
@@ -100,25 +100,54 @@ class Mutation:
         self,
         info: Info,
         comment_id: int,
-    ) -> CommentVoteType | None:
+    ) -> CommentType | None:
         current_user = get_current_user(info)
-        db_comment = Comment.objects.get(pk=comment_id)
+        db_comment = Comment.objects.filter(pk=comment_id).first()
         if not db_comment:
             raise NotFoundError("Comment not found")
 
-        existing_vote = CommentVote.objects.get(user=current_user, comment=db_comment)
+        existing_vote = CommentVote.objects.filter(user=current_user, comment=db_comment).first()
         if not existing_vote:
-            vote = CommentVote.objects.create(
+            CommentVote.objects.create(
                 user = current_user,
-                post = db_comment,
+                comment = db_comment,
                 value = VoteValue.UP,
             )
-            return vote                         # type: ignore
+            return db_comment                   # type: ignore
 
         if existing_vote.value == VoteValue.DOWN:
             existing_vote.value = VoteValue.UP
             existing_vote.save()
-            return existing_vote                # type: ignore
+            return db_comment                   # type: ignore
+        else:
+            existing_vote.delete()
+            return None
+
+
+    @strawberry.mutation
+    def downvote_comment(
+        self,
+        info: Info,
+        comment_id: int,
+    ) -> CommentType | None:
+        current_user = get_current_user(info)
+        db_comment = Comment.objects.filter(pk=comment_id).first()
+        if not db_comment:
+            raise NotFoundError("Comment not found")
+
+        existing_vote = CommentVote.objects.filter(user=current_user, comment=db_comment).first()
+        if not existing_vote:
+            CommentVote.objects.create(
+                user = current_user,
+                comment = db_comment,
+                value = VoteValue.DOWN,
+            )
+            return db_comment                   # type: ignore
+
+        if existing_vote.value == VoteValue.UP:
+            existing_vote.value = VoteValue.DOWN
+            existing_vote.save()
+            return db_comment                   # type: ignore
         else:
             existing_vote.delete()
             return None
