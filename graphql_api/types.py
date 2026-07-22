@@ -77,3 +77,36 @@ class CommunityType:
     description: strawberry.auto
     creator: UserType
     posts: list[PostType]
+
+
+@strawberry.type
+class PostPage:
+    items: list[PostType]
+    page: int
+    limit: int
+    total: int
+    pages: int
+    has_next: bool
+    has_prev: bool
+
+
+@strawberry.type
+class CommentPage:
+    items: list[CommentType]
+    page: int
+    limit: int
+    total: int
+    pages: int
+    has_next: bool
+    has_prev: bool
+
+
+@strawberry.type
+class CommunityPage:
+    items: list[CommunityType]
+    page: int
+    limit: int
+    total: int
+    pages: int
+    has_next: bool
+    has_prev: bool

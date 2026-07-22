@@ -1,11 +1,12 @@
 import strawberry
 from strawberry import Info
+from math import ceil
 from communities.models import Community
 from posts.models import Post
 from comments.models import Comment
 from exceptions import ValidationError, NotFoundError
 from utils.validators import validate_query_pagination
-from .types import CommunityType, PostType, UserType, CommentType
+from .types import CommunityType, UserType, CommentType, PostPage, CommunityPage, CommentPage
 from .inputs import CommentFilter, PostFilter, CommunityFilter
 
 
@@ -41,14 +42,24 @@ class Query:
                 creator__username=filters.creator
             )
         offset = (filters.page - 1) * filters.limit
-        return queryset[offset:offset + filters.limit]         # type: ignore
+        total = queryset.count()
+        pages = ceil(total / filters.limit) if total else 1
+        return CommunityPage(
+            items=queryset[offset:offset + filters.limit],             # type: ignore
+            page=filters.page,
+            limit=filters.limit,
+            total=total,
+            pages=pages,
+            has_next=filters.page < pages,
+            has_prev=filters.page > 1,
+        )
 
 
     @strawberry.field
     def posts(
         self,
         filters: PostFilter,
-    ) -> list[PostType]:
+    ) -> PostPage:
         validate_query_pagination(filters)
         queryset = Post.objects.all()
 
@@ -71,7 +82,17 @@ class Query:
                 queryset = queryset.order_by("-score")
             
         offset = (filters.page - 1) * filters.limit
-        return queryset[offset:offset + filters.limit]         # type: ignore
+        total = queryset.count()
+        pages = ceil(total / filters.limit) if total else 1
+        return PostPage(
+            items=queryset[offset:offset + filters.limit],             # type: ignore
+            page=filters.page,
+            limit=filters.limit,
+            total=total,
+            pages=pages,
+            has_next=filters.page < pages,
+            has_prev=filters.page > 1,
+        )
 
 
     @strawberry.field
@@ -101,7 +122,17 @@ class Query:
                 queryset = queryset.order_by("-score")
             
         offset = (filters.page - 1) * filters.limit
-        return queryset[offset:offset + filters.limit]         # type: ignore
+        total = queryset.count()
+        pages = ceil(total / filters.limit) if total else 1
+        return CommentPage(
+            items=queryset[offset:offset + filters.limit],             # type: ignore
+            page=filters.page,
+            limit=filters.limit,
+            total=total,
+            pages=pages,
+            has_next=filters.page < pages,
+            has_prev=filters.page > 1,
+        )
 
 
     @strawberry.field
@@ -123,4 +154,4 @@ class Query:
         )
         if not community:
             raise NotFoundError("Community not found.")
-        return community                                       # type: ignore
+        return community                                               # type: ignore
